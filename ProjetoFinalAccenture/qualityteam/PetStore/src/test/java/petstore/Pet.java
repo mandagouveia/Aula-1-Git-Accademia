@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.groovy.json.internal.Chr.contains;
 import static org.hamcrest.CoreMatchers.is;
 
 // 3- Classe
@@ -27,7 +28,7 @@ public class Pet {
 
         }
         // Incluir - Create - Post
-        @Test
+        @Test (priority = 1)
         public void incluirPet() throws IOException {
                 String jsonBody = lerJson("db/pet1.json");
 
@@ -47,6 +48,31 @@ public class Pet {
                         .statusCode(200)
                         .body("name", is("Valentina"))
                         .body("status", is("available"))
+
                 ;
         }
+
+        @Test(priority = 2)
+        public void consultarPet(){
+                String petId = "19920412124";
+
+                given()
+                        .contentType("application/json")
+                        .log().all()
+
+                 .when()
+                        .get(uri+"/"+petId)
+
+                  .then()
+                        .log().all()
+                        .statusCode(200)
+                        .body("name", is ("Valentina"))
+                        .body("category.name", is ("dog"))
+                        .body("status", is("available"));
+
+
+
+
+        }
+
 }
